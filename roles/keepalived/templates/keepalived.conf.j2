@@ -1,0 +1,24 @@
+! Configuration File for keepalived
+
+global_defs {
+   router_id kube_api
+}
+
+vrrp_script chk_haproxy {
+   script "/opt/ha/keepalived/chk_k8s_master.sh"   
+   interval 3                    
+   weight 5                     
+}
+
+vrrp_instance haproxy-vip {
+   interface {{ keepalived_bind_interface }}
+   state MASTER
+   virtual_router_id 51  
+   priority {{ keepalived_priority }}          
+   virtual_ipaddress {
+       {{ keepalived_vip }} dev {{ keepalived_bind_interface }} 
+   }
+   track_script {
+       chk_k8s
+   }
+}

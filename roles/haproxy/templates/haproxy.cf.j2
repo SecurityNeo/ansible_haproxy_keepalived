@@ -1,0 +1,33 @@
+global
+    daemon
+    maxconn 50000
+	pidfile		/var/run/haproxy.pid
+defaults
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+frontend k8s-api
+    bind *:{{ haproxy_bind_port }}
+	mode  tcp
+	option	tcplog
+	tcp-request		inspect-delay	5s
+	tcp-request		content accept if { req.ssl_hello_type 1 }
+    default_backend k8s-api
+
+backend k8s-api
+    mode tcp 
+	option tcp-check
+    balance roundrobin
+{% for balancing_server in haproxy_balancing_servers %}
+    server {{ balancing_server.name }} {{ balancing_server.ip }}: {{ balancing_server.port }} maxconn 30000 check inter 2000 rise 2 fall 5
+{% endfor %}
+
+
+listen stats
+   bind     *:9000     
+   mode     http
+   stats    enable
+   stats    realm Haproxy\ Statistics
+   stats    uri /
+   stats    auth admin:cloudos

@@ -1,0 +1,4 @@
+[master] 
+haproxy1 ansible_ssh_host=172.25.144.85 ansible_ssh_port=22 ansible_ssh_user=root
+haproxy2 ansible_ssh_host=172.25.144.86 ansible_ssh_port=22 ansible_ssh_user=root 
+haproxy3 ansible_ssh_host=172.25.144.87 ansible_ssh_port=22 ansible_ssh_user=root
