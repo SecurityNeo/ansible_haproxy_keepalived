@@ -6,7 +6,7 @@ Auto deploy HAproxy and keepalived by ansible
 - [Ansible](http://docs.ansible.com/intro_installation.html). Tested on 1.7.1 
 
 
-## Usage
+## Prepare
 
 - Edit ansible_hosts file
 - Edit ha_vars/main.yml
@@ -18,6 +18,7 @@ yum install *.rpm -y
 
 - The host what run the program can ssh to te target hosts without password.
 
+## Usage
 
 Run playbook.
 
