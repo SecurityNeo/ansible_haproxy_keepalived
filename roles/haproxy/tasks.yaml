@@ -1,61 +1,63 @@
 ---
-- name: Install the dependencies
-  yum: name={{ item }} state=installed
-  with_items:
-    - openssl-devel 
-    - pcre-devel
-    - make
-    - gcc
-    - socat
-  when: ansible_os_family == "RedHat"
-
 - name: Create src directory
-  shell: >
-  creates={{ haproxy_src_dir }}
+  file: 
+    path={{ haproxy_src_dir }} 
+    state=directory
+
+- name: Create confifure directory
+  file: 
+    path={{ haproxy_conf_dir }} 
+    state=directory
   
 - name: Copy the src to target hosts
   copy: 
-    src:  files/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}.tar.gz
-    dest: {{ haproxy_src_dir }}
-    
-- name: Unarchived haproxy
-  shell: >
-    tar xvf {{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}.tar.gz -C {{ haproxy_src_dir }}/
-    creates={{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}
-    
-- name:  Compile the source code
-  shell: >
-    cd {{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}  && make {{ haproxy_make_option }} PREFIX={{ haproxy_prefix_dir }} && make install PREFIX={{ haproxy_prefix_dir }}
-    
-- name: Create the user and group
-  group: name={{ haproxy_group }}
-  user: name={{ haproxy_user }} group={{ haproxy_group }} shell=/sbin/nologin
+    src=files/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}.tar.gz
+    dest={{ haproxy_src_dir }}
 
-- name: Create confifure directory
-  file: path={{ haproxy_conf_dir }} state=directory
+- name: Unarchived haproxy package
+  unarchive:
+    src={{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}.tar.gz
+    dest={{ haproxy_src_dir }}/
+    copy=no
+  
+- name:  Compile the source code
+  shell: 
+    cd {{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}  && make {{ haproxy_make_option }} PREFIX={{ haproxy_prefix_dir }} && make install PREFIX={{ haproxy_prefix_dir }}
+ 
+- name: Create group
+  group: 
+    name={{ haproxy_group }}
+ 
+- name: Create the user
+  user: 
+    name={{ haproxy_user }} group={{ haproxy_group }} shell=/sbin/nologin
 
 - name: Copy haproxy binary file to /usr/sbin/
-  shell: >
+  shell: 
     cp  {{ haproxy_prefix_dir }}/sbin/haproxy /usr/sbin/haproxy
 
 - name: Copy haproxy init file to /etc/init.d/
-  shell: >
+  shell: 
     cp {{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}/examples/haproxy.init /etc/init.d/haproxy
     creates=/etc/init.d/haproxy
   when: ansible_os_family == "RedHat"
 
 - name: Makesure the haproxy can auto started
-  file: >
+  file: 
     path=/etc/init.d/haproxy
     mode=0755
-  shell: >
+
+- name: Add haproxy to auto start  
+  shell: 
     chkconfig haproxy on
 
 - name: Copy haproxy configure file 
-  template: src=templates/haproxy.cfg.j2 dest={{ haproxy_conf_dir }}/haproxy.cfg
+  template: 
+    src=templates/haproxy.cfg.j2 
+    dest={{ haproxy_conf_dir }}/haproxy.cfg
 
 - name: Start HAproxy
-  service: >
+  service: 
     name=haproxy
     state=started
     enabled=yes

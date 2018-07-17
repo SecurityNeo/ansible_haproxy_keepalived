@@ -1,28 +1,38 @@
 - name: Modify kernel parameter
-  sysctl: >
+  sysctl: 
     name=net.ipv4.ip_nonlocal_bind
     value=1
     state=present
     ignoreerrors=yes
 
 - name: Modify kernel parameter
-  sysctl: >
+  sysctl: 
     name=net.ipv4.ip_forward
     value=1
     state=present
     ignoreerrors=yes
 
 - name: Stop Firewalld
-  shell: >
+  shell: 
     systemctl disable firewalld  && systemctl stop firewalld
     
 - name: Stop selinux
-  selinux: >
+  selinux: 
     state: disabled
     
 - name: Modify selinux configuration
-  replace: >
+  replace: 
     path: /etc/selinux/config
     regexp: '=enforcing'
     replace: '=disabled'
+
+- name: Install the dependencies
+  yum: name={{ item }} state=installed
+  with_items:
+    - openssl-devel 
+    - pcre-devel
+    - make
+    - gcc
+    - socat
+  when: ansible_os_family == "RedHat"
   

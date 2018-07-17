@@ -20,7 +20,7 @@ backend k8s-api
 	option tcp-check
     balance roundrobin
 {% for backend_server in haproxy_backend_servers %}
-    server {{ backend_server.name }} {{ backend_server.ip }}: {{ backend_server.port }} maxconn 30000 check inter 2000 rise 2 fall 5
+    server {{ backend_server.name }} {{ backend_server.ip }}:{{ backend_server.port }} maxconn 30000 check inter 2000 rise 2 fall 5
 {% endfor %}
 
 

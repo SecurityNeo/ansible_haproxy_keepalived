@@ -1,0 +1,7 @@
+- hosts: master
+  vars_files:
+    - ha_vars/main.yaml
+  tasks:
+    - include: roles/general/tasks.yaml
+    - include: roles/haproxy/tasks.yaml
+    - include: roles/keepalived/tasks.yaml

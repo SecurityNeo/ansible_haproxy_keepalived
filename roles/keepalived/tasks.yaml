@@ -1,40 +1,47 @@
 ---
-
 - name: Create prefix directory
-  shell: >
-  creates={{ keepalived_prefix_dir }}
+  file: 
+    path={{ keepalived_prefix_dir }}
+    state=directory
 
 - name: Create confifure directory
-  file: path={{ keepalived_conf_dir }} state=directory
+  file: 
+    path={{ keepalived_conf_dir }} 
+    state=directory
   
 - name: Copy the src to target hosts
   copy: 
-    src:  files/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}.tar.gz
-    dest: {{ keepalived_src_dir }}
+    src=files/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}.tar.gz
+    dest={{ keepalived_src_dir }}
     
-- name: Unarchived Keepalived
-  shell: >
-    tar xvf {{ haproxy_src_dir }}/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}.tar.gz -C {{ keepalived_src_dir }}/
-    creates={{ haproxy_src_dir }}/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}
+- name: Unarchived keepalived package
+  unarchive: 
+    src={{ haproxy_src_dir }}/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}.tar.gz
+    dest={{ keepalived_src_dir }}/
+    copy=no
     
-- name:  Compile the source code
-  shell: >
+- name: Compile the source code
+  shell: 
     cd {{ haproxy_src_dir }}/keepalived-{{ keepalived_major_version }}.{{ keepalived_minor_version }}  && ./configure --prefix={{ keepalived_prefix_dir }} && make && make install
     
 - name: Copy Keepalived configure file 
-  template: src=templates/keepalived.conf.j2 dest={{ keepalived_conf_dir }}/keepalived.conf
+  template: 
+    src=templates/keepalived.conf.j2 
+    dest={{ keepalived_conf_dir }}/keepalived.conf
   
 - name: Copy Keepalived systemd file
-  template: src=template/keepalived.service.j2 dest=/etc/systemd/system/keepalived.service
+  template: 
+    src=template/keepalived.service.j2
+    dest=/etc/systemd/system/keepalived.service
   
 - name: Copy the check script
   copy:
-    src: scripts/chk_k8s_master.sh
-    dest: {{ keepalived_prefix_dir }}
-    mode: 0755  
+    src=scripts/chk_k8s_master.sh
+    dest={{ keepalived_prefix_dir }}
+    mode=0755  
 
 - name: Start Keepalived
-  service: >
+  service: 
     name=keepalived
     state=started
     enabled=yes
