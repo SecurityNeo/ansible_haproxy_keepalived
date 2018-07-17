@@ -1,0 +1,28 @@
+- name: Modify kernel parameter
+  sysctl: >
+    name=net.ipv4.ip_nonlocal_bind
+    value=1
+    state=present
+    ignoreerrors=yes
+
+- name: Modify kernel parameter
+  sysctl: >
+    name=net.ipv4.ip_forward
+    value=1
+    state=present
+    ignoreerrors=yes
+
+- name: Stop Firewalld
+  shell: >
+    systemctl disable firewalld  && systemctl stop firewalld
+    
+- name: Stop selinux
+  selinux: >
+    state: disabled
+    
+- name: Modify selinux configuration
+  replace: >
+    path: /etc/selinux/config
+    regexp: '=enforcing'
+    replace: '=disabled'
+  

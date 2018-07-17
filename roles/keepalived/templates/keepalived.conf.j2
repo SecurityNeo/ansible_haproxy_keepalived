@@ -5,7 +5,7 @@ global_defs {
 }
 
 vrrp_script chk_haproxy {
-   script "/opt/ha/keepalived/chk_k8s_master.sh"   
+   script "{{ keepalived_prefix_dir }}/chk_k8s_master.sh"   
    interval 3                    
    weight 5                     
 }

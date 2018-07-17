@@ -32,7 +32,7 @@
   user: name={{ haproxy_user }} group={{ haproxy_group }} shell=/sbin/nologin
 
 - name: Create confifure directory
-  file: path=/etc/haproxy state=directory
+  file: path={{ haproxy_conf_dir }} state=directory
 
 - name: Copy haproxy binary file to /usr/sbin/
   shell: >
@@ -52,14 +52,7 @@
     chkconfig haproxy on
 
 - name: Copy haproxy configure file 
-  template: src=templates/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
-
-- name: Modify kernel parameter
-  sysctl: >
-    name=net.ipv4.ip_nonlocal_bind
-    value=1
-    state=present
-    ignoreerrors=yes
+  template: src=templates/haproxy.cfg.j2 dest={{ haproxy_conf_dir }}/haproxy.cfg
 
 - name: Start HAproxy
   service: >

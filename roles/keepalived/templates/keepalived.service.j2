@@ -1,0 +1,14 @@
+[Unit]
+Description=LVS and VRRP Hight Availability Monitor
+
+[Service]
+Type=forking
+PIDFile=/var/run/keepalived.pid
+KillMode=process
+ExecStart={{ keepalived_prefix_dir }}/sbin/keepalived $KEEPALIVED_OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
