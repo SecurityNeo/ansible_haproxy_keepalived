@@ -26,9 +26,8 @@ Run playbook.
 ansible-playbook main.yml -i ansible_hosts
 ```
 
-vars
----
-
+## vars
+```vars
 keepalived_bind_interface: eth0
 keepalived_vip: 172.25.144.88
 keepalived_major_version: 2.0
