@@ -19,8 +19,8 @@ backend k8s-api
     mode tcp 
 	option tcp-check
     balance roundrobin
-{% for balancing_server in haproxy_balancing_servers %}
-    server {{ balancing_server.name }} {{ balancing_server.ip }}: {{ balancing_server.port }} maxconn 30000 check inter 2000 rise 2 fall 5
+{% for backend_server in haproxy_backend_servers %}
+    server {{ backend_server.name }} {{ backend_server.ip }}: {{ backend_server.port }} maxconn 30000 check inter 2000 rise 2 fall 5
 {% endfor %}
 
 
@@ -30,4 +30,4 @@ listen stats
    stats    enable
    stats    realm Haproxy\ Statistics
    stats    uri /
-   stats    auth admin:cloudos
+   stats    auth {{ haproxy_auth_name }}:{{ haproxy_auth_pass }}
