@@ -31,7 +31,7 @@
   
 - name: Copy Keepalived systemd file
   template: 
-    src=template/keepalived.service.j2
+    src=templates/keepalived.service.j2
     dest=/etc/systemd/system/keepalived.service
   
 - name: Copy the check script
