@@ -1,32 +1,38 @@
 # ansible_haproxy_keepalived
-Auto deploy HAproxy and keepalived by ansible
+Auto deploy HAproxy and keepalived by ansible offline
 
 ## Requirements
 - Centos7
-- [Ansible](http://docs.ansible.com/intro_installation.html). Tested on 1.7.1 
+- [Ansible](http://docs.ansible.com/intro_installation.html). Tested on 2.6.0 
 
+## Matching Version
+- HAproxy		1.8.12
+- Keepalived	2.0.5
 
 ## Prepare
 
-- Edit ansible_hosts file
-- Edit ha_vars/main.yml
-
-- Prepare tree(or five ...) hosts,and make sure the Ansible installed in the hosts(at least one).If you could not install Ansible on line,you can click [me](http:test.com) to download all the rpm packages to your hosts,then run the command
+- Preparing tree(or five ...) hosts,and make sure the Ansible installed in the hosts(at least one).
+  If you could not install Ansible on line,you can click [me](https://pan.baidu.com/s/1ebVT7E0i672zGP2CoL4bUw) to download all the rpm packages to your hosts.
 ```bash
-yum install *.rpm -y
+tar -xvf ansible.tar
+```
+```bash
+cd ansible && yum install *.rpm -y
 ```
 
+- All of the hosts could install openssl-devel,pcre-devel,make,gcc,socat through yum.
 - The host what run the program can ssh to te target hosts without password.
 
 ## Usage
 
-Run playbook.
-
+- Edit ansible_hosts file
+- Edit ha_vars/main.yml
+- Run playbook.
 ```bash
 ansible-playbook main.yml -i ansible_hosts
 ```
 
-## vars
+## Vars
 ```vars
 keepalived_bind_interface: eth0
 keepalived_vip: 172.25.144.88
