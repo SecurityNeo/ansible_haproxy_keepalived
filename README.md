@@ -29,7 +29,7 @@ cd ansible && yum install *.rpm -y
 - Edit ha_vars/main.yml
 - Run playbook.
 ```bash
-ansible-playbook main.yml -i ansible_hosts
+ansible-playbook main.yaml -i ansible_hosts
 ```
 
 ## Vars
